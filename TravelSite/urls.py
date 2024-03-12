@@ -7,6 +7,7 @@ from TravelSite.settings.swagger import swagger_urlpatterns
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/v1/", include("apps.travel.urls"))
 ] + swagger_urlpatterns
 
 if settings.DEBUG:
