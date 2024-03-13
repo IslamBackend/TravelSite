@@ -44,3 +44,34 @@ class HousingImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.housing.housing_name}"
+
+
+class Room(models.Model):
+    housing = models.ForeignKey(Housing, on_delete=models.CASCADE,
+                                related_name='rooms', verbose_name='Название места жительства')
+    room_name = models.CharField(max_length=100, choices=ACCOMMODATION_TYPE_CHOICES, verbose_name='Название номера')
+    price_per_night = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="цена за ночь")
+    num_rooms = models.IntegerField(default=1, choices=[(i, str(i)) for i in range(1, 6)],
+                                    verbose_name="Количество комнат в номере")
+    bedrooms = models.CharField(max_length=50, choices=BEDROOM_CHOICES, verbose_name="Количество спален")
+    room_area = models.PositiveIntegerField(verbose_name="Площадь комнаты(м²)")
+    free_cancellation_anytime = models.BooleanField(default=False, verbose_name='Бесплатное отмена в любое время')
+
+    def __str__(self):
+        return self.room_name
+
+    class Meta:
+        verbose_name = 'Номер'
+        verbose_name_plural = 'Номера'
+
+
+class RoomImage(models.Model):
+    room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name='room_images', null=True, blank=True)
+    image = models.ImageField(upload_to='rooms', verbose_name="Изображения номера", null=True, blank=True)
+
+    def __str__(self):
+        return f"Image for {self.room.room_name}"
+
+    class Meta:
+        verbose_name = 'Изображение номера'
+        verbose_name_plural = 'Изображения номеров'
