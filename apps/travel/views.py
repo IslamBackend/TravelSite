@@ -1,23 +1,23 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 
-from apps.travel.models import Housing, Room
-from apps.travel.serializers import (TravelListSerializer, TravelDetailSerializer,
-                                     RoomListSerializer, RoomDetailSerializer)
+from apps.travel.models import Housing, Room, HousingReview
+from apps.travel.serializers import (HousingListSerializer, HousingDetailSerializer,
+                                     RoomListSerializer, RoomDetailSerializer, HousingReviewSerializer)
 
 
-class TravelListCreateAPIView(ListCreateAPIView):
+class HousingListCreateAPIView(ListCreateAPIView):
     queryset = Housing.objects.all()
-    serializer_class = TravelDetailSerializer
+    serializer_class = HousingDetailSerializer
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return TravelListSerializer
+            return HousingListSerializer
         return self.serializer_class
 
 
-class TravelRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+class HousingRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Housing.objects.all()
-    serializer_class = TravelDetailSerializer
+    serializer_class = HousingDetailSerializer
     lookup_field = 'slug'
 
 
@@ -36,3 +36,9 @@ class RoomRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = RoomDetailSerializer
 
 
+class HousingReviewsCreateAPIView(CreateAPIView):
+    queryset = HousingReview.objects.all()
+    serializer_class = HousingReviewSerializer
+
+    def perform_create(self, serializer, *args, **kwargs):
+        serializer.save(user=self.request.user)

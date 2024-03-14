@@ -1,9 +1,10 @@
+from django.db.models import Avg
 from rest_framework import serializers
 
-from apps.travel.models import Housing, Room, RoomImage
+from apps.travel.models import Housing, Room, RoomImage, HousingReview
 
 
-class TravelListSerializer(serializers.ModelSerializer):
+class HousingListSerializer(serializers.ModelSerializer):
     first_image = serializers.SerializerMethodField()
 
     class Meta:
@@ -25,14 +26,7 @@ class TravelListSerializer(serializers.ModelSerializer):
 class RoomImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomImage
-        fields = "__all__"
-
-
-class TravelDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Housing
-        fields = ('housing_name', 'housing_type', 'address', 'region', 'stars',
-                  'check_in_time_start', 'check_in_time_end', 'check_out_time_start', 'check_out_time_end')
+        fields = ('id', 'image')
 
 
 class RoomListSerializer(serializers.ModelSerializer):
@@ -52,6 +46,39 @@ class RoomListSerializer(serializers.ModelSerializer):
             return full_image_url
 
         return None
+
+
+class HousingReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HousingReview
+        fields = ('id', 'user', 'housing', 'comment', 'created_at', 'cleanliness_rating', 'comfort_rating',
+                  'staff_rating', 'value_for_money_rating', 'food_rating', 'location_rating')
+        read_only_fields = ('user',)
+
+
+class HousingDetailSerializer(serializers.ModelSerializer):
+    rooms = RoomListSerializer(read_only=True, many=True)
+    reviews = HousingReviewSerializer(read_only=True, many=True)
+    average_rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Housing
+        fields = ('housing_name', 'average_rating', 'housing_type', 'address', 'region', 'stars',
+                  'check_in_time_start', 'check_in_time_end', 'check_out_time_start', 'check_out_time_end',
+                  'rooms', 'reviews')
+
+    def get_average_rating(self, obj):
+        average_ratings = HousingReview.objects.filter(housing=obj).aggregate(
+            Avg('cleanliness_rating'),
+            Avg('comfort_rating'),
+            Avg('staff_rating'),
+            Avg('value_for_money_rating'),
+            Avg('food_rating'),
+            Avg('location_rating')
+        )
+        print(HousingReview.staff_rating)
+        total_ratings = sum(average_ratings.values()) / len(average_ratings)
+        return round(total_ratings)
 
 
 class RoomDetailSerializer(serializers.ModelSerializer):

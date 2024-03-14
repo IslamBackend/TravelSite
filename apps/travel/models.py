@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-
+from django.contrib.auth.models import User
 from apps.travel.constants import *
 
 
@@ -33,6 +33,7 @@ class Housing(models.Model):
 
         super().save(*args, **kwargs)
 
+
     class Meta:
         verbose_name = 'Место жительства'
         verbose_name_plural = 'Места жительства'
@@ -44,6 +45,29 @@ class HousingImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.housing.housing_name}"
+
+
+class HousingReview(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='reviews',
+                             verbose_name="Пользователь")
+    housing = models.ForeignKey(Housing, on_delete=models.CASCADE, related_name='reviews',
+                                verbose_name='Место жительства')
+    comment = models.TextField(max_length=500, verbose_name="Комментарий")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    cleanliness_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, verbose_name='Чистота')
+    comfort_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, verbose_name='Комфорт')
+    staff_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, verbose_name='Персонал')
+    value_for_money_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES,
+                                                              verbose_name='Цена/Качества')
+    food_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, verbose_name='Питание')
+    location_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, verbose_name='Местоположение')
+
+    def __str__(self):
+        return f"Отзыв от {self.user} на {self.housing.housing_name}"
+
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
 
 
 class Room(models.Model):

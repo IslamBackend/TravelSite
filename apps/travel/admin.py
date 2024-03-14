@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.travel.models import Housing, HousingImage, RoomImage, Room
+from apps.travel.models import Housing, HousingImage, RoomImage, Room, HousingReview
 
 
 class HousingImageInline(admin.TabularInline):
@@ -36,3 +36,9 @@ class RoomAdmin(admin.ModelAdmin):
     list_filter = ('housing', 'room_name',)
     search_fields = ('housing__housing_name', 'room_name')
     inlines = (RoomImageInline,)
+
+
+@admin.register(HousingReview)
+class HousingReviewAdmin(admin.ModelAdmin):
+    list_display = ('user', 'housing', 'created_at')
+    list_filter = ('housing',)

@@ -51,8 +51,7 @@ ROOT_URLCONF = 'TravelSite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -107,6 +106,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'back_static')
 MEDIA_URL = "/back_media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'back_media')
 
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': "%d.%m.%Y %H:%M:%S",
+    'DATE_FORMAT': "%d.%m.%Y",
+}
 
 if not PRODUCTION:
     from .local import *

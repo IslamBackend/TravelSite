@@ -1,11 +1,12 @@
 from django.urls import path
 
-from apps.travel.views import TravelListCreateAPIView, TravelRetrieveUpdateDestroyAPIView, RoomListCreateAPIView, \
-    RoomRetrieveUpdateDestroyAPIView
+from apps.travel.views import HousingListCreateAPIView, HousingRetrieveUpdateDestroyAPIView, RoomListCreateAPIView, \
+    RoomRetrieveUpdateDestroyAPIView, HousingReviewsCreateAPIView
 
 urlpatterns = [
-    path('travel/', TravelListCreateAPIView.as_view()),
-    path('travel/<str:slug>/', TravelRetrieveUpdateDestroyAPIView.as_view()),
-    path('room/', RoomListCreateAPIView.as_view()),
-    path('room/<int:pk>/', RoomRetrieveUpdateDestroyAPIView.as_view()),
+    path('housing/', HousingListCreateAPIView.as_view()),
+    path('housing/<str:slug>/', HousingRetrieveUpdateDestroyAPIView.as_view()),
+    path('rooms/', RoomListCreateAPIView.as_view()),
+    path('rooms/<int:pk>/', RoomRetrieveUpdateDestroyAPIView.as_view()),
+    path('reviews/', HousingReviewsCreateAPIView.as_view()),
 ]
