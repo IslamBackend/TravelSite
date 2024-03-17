@@ -33,7 +33,6 @@ class Housing(models.Model):
 
         super().save(*args, **kwargs)
 
-
     class Meta:
         verbose_name = 'Место жительства'
         verbose_name_plural = 'Места жительства'
@@ -99,3 +98,28 @@ class RoomImage(models.Model):
     class Meta:
         verbose_name = 'Изображение номера'
         verbose_name_plural = 'Изображения номеров'
+
+
+class WishlistAlbum(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Альбом желаний"
+        verbose_name_plural = "Альбомы желаний"
+
+    def __str__(self):
+        return self.title
+
+
+class HouseFavorite(models.Model):
+    wishlist_album = models.ForeignKey(WishlistAlbum, on_delete=models.CASCADE, related_name='favorites')
+    house = models.ForeignKey(Housing, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранные"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.house.housing_name}"

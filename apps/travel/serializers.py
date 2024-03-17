@@ -1,7 +1,7 @@
 from django.db.models import Avg
 from rest_framework import serializers
 
-from apps.travel.models import Housing, Room, RoomImage, HousingReview
+from apps.travel.models import Housing, Room, RoomImage, HousingReview, WishlistAlbum, HouseFavorite
 
 
 class HousingListSerializer(serializers.ModelSerializer):
@@ -60,12 +60,13 @@ class HousingDetailSerializer(serializers.ModelSerializer):
     rooms = RoomListSerializer(read_only=True, many=True)
     reviews = HousingReviewSerializer(read_only=True, many=True)
     average_rating = serializers.SerializerMethodField()
+    reviews_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Housing
         fields = ('housing_name', 'average_rating', 'housing_type', 'address', 'region', 'stars',
                   'check_in_time_start', 'check_in_time_end', 'check_out_time_start', 'check_out_time_end',
-                  'rooms', 'reviews')
+                  'rooms', 'reviews_count', 'reviews')
 
     def get_average_rating(self, obj):
         average_ratings = HousingReview.objects.filter(housing=obj).aggregate(
@@ -76,9 +77,11 @@ class HousingDetailSerializer(serializers.ModelSerializer):
             Avg('food_rating'),
             Avg('location_rating')
         )
-        print(HousingReview.staff_rating)
         total_ratings = sum(average_ratings.values()) / len(average_ratings)
         return round(total_ratings)
+
+    def get_reviews_count(self, obj):
+        return obj.reviews.count()
 
 
 class RoomDetailSerializer(serializers.ModelSerializer):
@@ -88,3 +91,15 @@ class RoomDetailSerializer(serializers.ModelSerializer):
         model = Room
         fields = ('id', 'housing', 'room_images', 'room_name', 'price_per_night', 'room_area', 'bedrooms', 'num_rooms',
                   'free_cancellation_anytime')
+
+
+class WishlistAlbumSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WishlistAlbum
+        fields = '__all__'
+
+
+class HouseFavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseFavorite
+        fields = '__all__'

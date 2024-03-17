@@ -1,8 +1,9 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 
-from apps.travel.models import Housing, Room, HousingReview
+from apps.travel.models import Housing, Room, HousingReview, WishlistAlbum, HouseFavorite
 from apps.travel.serializers import (HousingListSerializer, HousingDetailSerializer,
-                                     RoomListSerializer, RoomDetailSerializer, HousingReviewSerializer)
+                                     RoomListSerializer, RoomDetailSerializer, HousingReviewSerializer,
+                                     WishlistAlbumSerializer, HouseFavoriteSerializer)
 
 
 class HousingListCreateAPIView(ListCreateAPIView):
@@ -40,5 +41,15 @@ class HousingReviewsCreateAPIView(CreateAPIView):
     queryset = HousingReview.objects.all()
     serializer_class = HousingReviewSerializer
 
-    def perform_create(self, serializer, *args, **kwargs):
+    def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class WishlistAlbumListCreateAPIView(ListCreateAPIView):
+    queryset = WishlistAlbum.objects.all()
+    serializer_class = WishlistAlbumSerializer
+
+
+class HouseFavoriteListCreateAPIView(ListCreateAPIView):
+    queryset = HouseFavorite.objects.all()
+    serializer_class = HouseFavoriteSerializer
