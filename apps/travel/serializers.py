@@ -103,3 +103,5 @@ class HouseFavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseFavorite
         fields = '__all__'
+        read_only_fields = ('user',)
+
